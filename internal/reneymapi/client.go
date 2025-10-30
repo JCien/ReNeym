@@ -3,7 +3,7 @@ package reneymapi
 import (
 	"time"
 
-	"github.com/JesusC-XR/ReNeym/internal/reneymcache"
+	"github.com/JCien/ReNeym/internal/reneymcache"
 )
 
 // Client

@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/JesusC-XR/ReNeym/internal/reneymapi"
+	"github.com/JCien/ReNeym/internal/reneymapi"
 )
 
 type cliCommand struct {

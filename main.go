@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/JesusC-XR/ReNeym/internal/reneymapi"
+	"github.com/JCien/ReNeym/internal/reneymapi"
 )
 
 func main() {

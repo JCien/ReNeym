@@ -1,4 +1,4 @@
-module github.com/JesusC-XR/ReNeym
+module github.com/JCien/ReNeym
 
 go 1.25.1
 
