@@ -19,6 +19,8 @@ type config struct {
 	reneymapiClient reneymapi.Client
 	activeSheet     string
 	sheetData       map[string][][]string
+	sheets          []string
+	fileNames       []string
 }
 
 func getCommands() map[string]cliCommand {
@@ -33,15 +35,20 @@ func getCommands() map[string]cliCommand {
 			description: "Exit the app",
 			callback:    commandExit,
 		},
-		"read": {
-			name:        "read",
-			description: "Reads an Excel doc to get the workign sheet(s)",
-			callback:    commandRead,
+		"scan": {
+			name:        "scan",
+			description: "Scans an Excel doc to get the working Sheet(s)",
+			callback:    commandScan,
 		},
-		"data": {
-			name:        "data",
-			description: "Lists the data in the selected/active sheet",
-			callback:    commandData,
+		"rename": {
+			name:        "rename",
+			description: "Renames files according to selected Sheet",
+			callback:    commandRename,
+		},
+		"sheets": {
+			name:        "sheets",
+			description: "List the Sheets in the scanned Excel doc",
+			callback:    commandSheets,
 		},
 	}
 }
@@ -50,7 +57,11 @@ func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Print("RN > ")
+		activeSheet := ""
+		if cfg.activeSheet != "" {
+			activeSheet = fmt.Sprintf("(%s)", cfg.activeSheet)
+		}
+		fmt.Printf("RN %s> ", activeSheet)
 		scanner.Scan()
 
 		input := cleanInput(scanner.Text())
