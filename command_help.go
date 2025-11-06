@@ -4,9 +4,10 @@ import "fmt"
 
 func commandHelp(cfg *config, args ...string) error {
 	fmt.Println()
-	fmt.Println("Welcome to Reneym (Re-Name)!")
-	fmt.Println("This is a bulk rename using an Excel spreadsheet.")
-	fmt.Println("Usage:")
+	fmt.Println(
+		"Reneym (Re-Name) is a bulk rename tool that uses an Excel spreadsheet to rename files.",
+	)
+	fmt.Println("Commands:")
 	fmt.Println()
 
 	for _, cmd := range getCommands() {

@@ -8,17 +8,19 @@ import (
 
 func commandScan(cfg *config, args ...string) error {
 	if len(args) != 1 {
-		return fmt.Errorf("Usage: read <Spreadsheet file>")
+		return fmt.Errorf("Usage: scan <Spreadsheet file>")
 	}
 
 	spreadsheet := args[0]
 
+	// Opens the spreadsheet and closes it when done
 	file, err := excelize.OpenFile(spreadsheet)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
+	// This gets all the active sheets in the spreadsheet and saves them to a slice
 	cfg.sheets = []string{}
 	for _, name := range file.GetSheetList() {
 		visible, _ := file.GetSheetVisible(name)
@@ -34,6 +36,12 @@ func commandScan(cfg *config, args ...string) error {
 			return err
 		}
 	}
+
+	// This will clear the screen and put prompt at the top
+	fmt.Print("\033[H\033[2J")
+
+	// This saves the active spreadsheet for display
+	// cfg.activeDoc = spreadsheet
 
 	// if len(cfg.sheets) > 1 {
 	//	fmt.Println("Multiple Sheets Detected")

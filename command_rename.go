@@ -43,6 +43,7 @@ func commandRename(cfg *config, args ...string) error {
 				continue
 			}
 			if c == fnColumn {
+				// FieldsFunc splits a string after a return character and skips empty strings
 				cellValue := strings.FieldsFunc(rowCell, func(r rune) bool {
 					return r == '\n'
 				})
@@ -51,6 +52,7 @@ func commandRename(cfg *config, args ...string) error {
 		}
 	}
 	fmt.Printf("There are %v files to rename.\n", len(cfg.fileNames)-1)
+	FileReneym(cfg.fileNames)
 	cfg.activeSheet = ""
 	return nil
 }

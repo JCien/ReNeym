@@ -1,3 +1,5 @@
 reneym
 .env
 *.xlsx
+SourceFiles/
+Test/

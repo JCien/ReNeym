@@ -8,8 +8,8 @@ func commandSheets(cfg *config, args ...string) error {
 		return nil
 	}
 
-	for i, sheet := range cfg.sheets {
-		fmt.Printf("%v) %s\n", i, sheet)
+	for _, sheet := range cfg.sheets {
+		fmt.Printf("%s\n", sheet)
 	}
 	return nil
 }

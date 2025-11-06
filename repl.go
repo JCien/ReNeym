@@ -18,6 +18,7 @@ type cliCommand struct {
 type config struct {
 	reneymapiClient reneymapi.Client
 	activeSheet     string
+	activeDoc       string
 	sheetData       map[string][][]string
 	sheets          []string
 	fileNames       []string
@@ -54,19 +55,32 @@ func getCommands() map[string]cliCommand {
 }
 
 func startRepl(cfg *config) {
+	fmt.Print("\033[H\033[2J")
+	fmt.Println("Welcome to the Reneym tool.")
+	fmt.Println("Type 'help' for a list of available commands.")
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
-		activeSheet := ""
-		if cfg.activeSheet != "" {
-			activeSheet = fmt.Sprintf("(%s)", cfg.activeSheet)
+		activeDoc := ""
+		if cfg.activeDoc != "" {
+			activeDoc = fmt.Sprintf("(%s)", cfg.activeDoc)
 		}
-		fmt.Printf("RN %s> ", activeSheet)
+		fmt.Printf("RN %s> ", activeDoc)
 		scanner.Scan()
 
-		input := cleanInput(scanner.Text())
+		ogInput := scanner.Text()
+		input := cleanInput(ogInput)
 		if len(input) == 0 {
 			continue
+		}
+
+		// This checks if the command is scan and saves the spreadsheet name
+		if input[0] == "scan" && len(input) == 2 {
+			doc := getActiveDoc(ogInput)[1]
+			_, err := os.Stat(doc)
+			if err == nil {
+				cfg.activeDoc = doc
+			}
 		}
 
 		usrInput := input[0]
@@ -94,4 +108,8 @@ func cleanInput(text string) []string {
 	lower := strings.ToLower(text)
 	clean := strings.Fields(lower)
 	return clean
+}
+
+func getActiveDoc(text string) []string {
+	return strings.Fields(text)
 }
