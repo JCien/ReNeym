@@ -1,5 +1,6 @@
 reneym
 .env
 *.xlsx
+.DS_Store
 SourceFiles/
 Test/

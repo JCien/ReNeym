@@ -51,8 +51,9 @@ func commandRename(cfg *config, args ...string) error {
 			}
 		}
 	}
-	fmt.Printf("There are %v files to rename.\n", len(cfg.fileNames)-1)
-	FileReneym(cfg.fileNames)
+	fmt.Printf("There should be %v files renamed.\n", len(cfg.fileNames)-1)
+	fmt.Printf("Please confirm in %v folder.\n", cfg.activeSheet)
+	FileReneym(cfg)
 	cfg.activeSheet = ""
 	return nil
 }
