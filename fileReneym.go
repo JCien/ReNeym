@@ -57,7 +57,8 @@ func FileReneym(cfg *config) {
 				for _, newFileName := range cfg.fileNames {
 					newCheck := strings.Split(newFileName, " x ")
 					for i, key := range destSlice[:len(destSlice)-1] {
-						if strings.Contains(newCheck[len(newCheck)-1], strings.ToLower(key)) && strings.Contains(newCheck[len(newCheck)-1], strings.ToLower(adID)) && strings.Contains(newCheck[len(newCheck)-1], SSorTP) {
+						tmpName := strings.ToLower(newCheck[len(newCheck)-1])
+						if strings.Contains(tmpName, strings.ToLower(key)) && strings.Contains(tmpName, strings.ToLower(adID)) && strings.Contains(tmpName, SSorTP) {
 							if i == len(destSlice)-2 {
 								// fmt.Printf("%v -> %v\n", fileName, newFileName)
 								moveFile(filepath.Join(path, fileName+ext), newFileName+ext, filepath.Join(sheetFolder, destSlice[1]))
