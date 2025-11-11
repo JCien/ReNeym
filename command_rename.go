@@ -35,6 +35,7 @@ func commandRename(cfg *config, args ...string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("***********************************")
 
 	cfg.fileNames = []string{}
 	for c, col := range cols {
@@ -51,9 +52,24 @@ func commandRename(cfg *config, args ...string) error {
 			}
 		}
 	}
-	fmt.Printf("There should be %v files renamed.\n", len(cfg.fileNames)-1)
-	fmt.Printf("Please confirm in %v folder.\n", cfg.activeSheet)
-	FileReneym(cfg)
+	numFilesMoved := FileReneym(cfg)
+	totalFileNames := len(cfg.fileNames) - 1
+	filesLeft := totalFileNames - numFilesMoved
+	if numFilesMoved == 0 {
+		fmt.Println("No files were renamed.")
+		fmt.Println("Make sure source files are in work folder.")
+	} else if numFilesMoved < totalFileNames {
+		fmt.Printf("Attn: Not all files were processesed for this tab.\n")
+		fmt.Printf("%v files left to rename and move.\n", filesLeft)
+		if filesLeft < 20 {
+			fmt.Println("Please rename manually.")
+			removeSheet(cfg)
+		}
+	} else {
+		fmt.Printf("%v files renamed and moved.\n", totalFileNames)
+		fmt.Printf("Please confirm renamed files in %v folder.\n", cfg.activeSheet)
+		removeSheet(cfg)
+	}
 	cfg.activeSheet = ""
 	return nil
 }
@@ -137,5 +153,19 @@ func getInput(numSheets int, defaultValue *int) int {
 		}
 
 		return index
+	}
+}
+
+func removeSheet(cfg *config) {
+	index := -1
+	for i, v := range cfg.sheets {
+		if v == cfg.activeSheet {
+			index = i
+			break
+		}
+	}
+
+	if index != -1 {
+		cfg.sheets = append(cfg.sheets[:index], cfg.sheets[index+1:]...)
 	}
 }

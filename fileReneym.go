@@ -7,14 +7,15 @@ import (
 	"strings"
 )
 
-func FileReneym(cfg *config) {
+func FileReneym(cfg *config) int {
 	path := "./Test"
+	var numFilesMoved int
 	sheetFolder := filepath.Join(path, cfg.activeSheet)
 	// Reading files in the Test directory
 	entries, err := os.ReadDir(path)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return numFilesMoved
 	}
 
 	// If directory doesn't exist create a folder for the active tab to put in the renamed files
@@ -22,7 +23,7 @@ func FileReneym(cfg *config) {
 		err := os.Mkdir(sheetFolder, 0750)
 		if err != nil {
 			fmt.Println("Error creating directory:", err)
-			return
+			return numFilesMoved
 		}
 	}
 
@@ -51,8 +52,12 @@ func FileReneym(cfg *config) {
 					SSorTP = "3p"
 				case "ProRes":
 					SSorTP = "prores"
-				default:
+				case "SiteServed":
 					SSorTP = "ss"
+				case "ss":
+					SSorTP = "ss"
+				default:
+					SSorTP = ""
 				}
 				for _, newFileName := range cfg.fileNames {
 					newCheck := strings.Split(newFileName, " x ")
@@ -61,7 +66,12 @@ func FileReneym(cfg *config) {
 						if strings.Contains(tmpName, strings.ToLower(key)) && strings.Contains(tmpName, strings.ToLower(adID)) && strings.Contains(tmpName, SSorTP) {
 							if i == len(destSlice)-2 {
 								// fmt.Printf("%v -> %v\n", fileName, newFileName)
-								moveFile(filepath.Join(path, fileName+ext), newFileName+ext, filepath.Join(sheetFolder, destSlice[1]))
+								err := moveFile(filepath.Join(path, fileName+ext), newFileName+ext, filepath.Join(sheetFolder, destSlice[1]))
+								if err != nil {
+									fmt.Println(err)
+									continue
+								}
+								numFilesMoved += 1
 							} else {
 								continue
 							}
@@ -73,13 +83,14 @@ func FileReneym(cfg *config) {
 			}
 		}
 	}
+
+	return numFilesMoved
 }
 
-func moveFile(src, newFileName, dest string) {
+func moveFile(src, newFileName, dest string) error {
 	if _, err := os.Stat(dest); os.IsNotExist(err) {
 		if err := os.MkdirAll(dest, 0755); err != nil {
-			fmt.Println("Error creating directory:", err)
-			return
+			return fmt.Errorf("Error creating directory: %v", err)
 		}
 	}
 
@@ -88,7 +99,7 @@ func moveFile(src, newFileName, dest string) {
 
 	// Move file
 	if err := os.Rename(src, dst); err != nil {
-		fmt.Println("Error renaming file:", err)
-		return
+		return fmt.Errorf("Error renaming file: %v", err)
 	}
+	return nil
 }
