@@ -36,11 +36,28 @@ func FileReneym(cfg *config) int {
 				// Extracting Ad-ID, Destination key words and extension from files
 				ext := filepath.Ext(entry.Name())
 				fileName := strings.TrimSuffix(entry.Name(), ext)
+
 				fileNameParts := strings.Split(fileName, "__")
 				adID := fileNameParts[0]
 				destSlice := strings.Split(fileNameParts[1], "_")
+
 				if len(destSlice) == 2 {
-					destSlice = append(destSlice, "ss")
+					if strings.Contains(strings.ToLower(entry.Name()), "youtube") || strings.Contains(strings.ToLower(entry.Name()), "twitch") {
+						orig := entry.Name()
+						fileName = fileName + "_SiteServed"
+						if err := os.Rename(filepath.Join(path, orig), filepath.Join(path, fileName+ext)); err != nil {
+							fmt.Printf("Error renaming file: %v\n", err)
+						}
+					} else {
+						orig := entry.Name()
+						fileName = fileName + "_default"
+						if err := os.Rename(filepath.Join(path, orig), filepath.Join(path, fileName+ext)); err != nil {
+							fmt.Printf("Error renaming file: %v\n", err)
+						}
+					}
+					fileNameParts := strings.Split(fileName, "__")
+					adID = fileNameParts[0]
+					destSlice = strings.Split(fileNameParts[1], "_")
 				}
 				SSorTP := ""
 				switch destSlice[len(destSlice)-1] {
@@ -54,8 +71,10 @@ func FileReneym(cfg *config) int {
 					SSorTP = "prores"
 				case "SiteServed":
 					SSorTP = "ss"
-				case "ss":
-					SSorTP = "ss"
+				case "MP4":
+					SSorTP = "mp4"
+				case "default":
+					SSorTP = ""
 				default:
 					SSorTP = ""
 				}
@@ -63,10 +82,15 @@ func FileReneym(cfg *config) int {
 					newCheck := strings.Split(newFileName, " x ")
 					for i, key := range destSlice[:len(destSlice)-1] {
 						tmpName := strings.ToLower(newCheck[len(newCheck)-1])
-						if strings.Contains(tmpName, strings.ToLower(key)) && strings.Contains(tmpName, strings.ToLower(adID)) && strings.Contains(tmpName, SSorTP) {
+						if strings.Contains(tmpName, strings.ToLower(key)) &&
+							strings.Contains(tmpName, strings.ToLower(adID)) &&
+							strings.Contains(tmpName, SSorTP) {
 							if i == len(destSlice)-2 {
-								// fmt.Printf("%v -> %v\n", fileName, newFileName)
-								err := moveFile(filepath.Join(path, fileName+ext), newFileName+ext, filepath.Join(sheetFolder, destSlice[1]))
+								err := moveFile(
+									filepath.Join(path, fileName+ext),
+									newFileName+ext,
+									filepath.Join(sheetFolder, destSlice[1]),
+								)
 								if err != nil {
 									fmt.Println(err)
 									continue
