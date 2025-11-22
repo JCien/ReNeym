@@ -8,7 +8,7 @@ import (
 )
 
 func FileReneym(cfg *config) int {
-	path := "./Test"
+	path := "."
 	var numFilesMoved int
 	sheetFolder := filepath.Join(path, cfg.activeSheet)
 	// Reading files in the Test directory
@@ -86,16 +86,31 @@ func FileReneym(cfg *config) int {
 							strings.Contains(tmpName, strings.ToLower(adID)) &&
 							strings.Contains(tmpName, SSorTP) {
 							if i == len(destSlice)-2 {
-								err := moveFile(
-									filepath.Join(path, fileName+ext),
-									newFileName+ext,
-									filepath.Join(sheetFolder, destSlice[1]),
-								)
-								if err != nil {
-									fmt.Println(err)
-									continue
+								if !strings.Contains(tmpName, "3rd") && !strings.Contains(tmpName, "dcm") &&
+									!strings.Contains(tmpName, "3p") && !strings.Contains(tmpName, "prores") &&
+									!strings.Contains(tmpName, "ss") && !strings.Contains(tmpName, "mp4") && strings.Contains(fileName, "default") {
+									err := moveFile(filepath.Join(path, fileName+ext), newFileName+ext, filepath.Join(sheetFolder, destSlice[1]))
+									if err != nil {
+										fmt.Println(err)
+										continue
+									}
+									numFilesMoved += 1
+								} else {
+									if strings.Contains(fileName, "default") {
+										continue
+									}
+									err := moveFile(
+										filepath.Join(path, fileName+ext),
+										newFileName+ext,
+										filepath.Join(sheetFolder, destSlice[1]),
+									)
+									if err != nil {
+										fmt.Println(err)
+										continue
+									}
+									numFilesMoved += 1
+
 								}
-								numFilesMoved += 1
 							} else {
 								continue
 							}
@@ -113,7 +128,7 @@ func FileReneym(cfg *config) int {
 
 func moveFile(src, newFileName, dest string) error {
 	if _, err := os.Stat(dest); os.IsNotExist(err) {
-		if err := os.MkdirAll(dest, 0755); err != nil {
+		if err := os.MkdirAll(dest, 0750); err != nil {
 			return fmt.Errorf("Error creating directory: %v", err)
 		}
 	}

@@ -4,7 +4,7 @@ import "fmt"
 
 func commandSheets(cfg *config, args ...string) error {
 	if len(cfg.sheetData) < 1 {
-		fmt.Println("No sheets detected, please scan a Spreadsheet")
+		fmt.Println("No sheets detected, please scan a spreadsheet")
 		return nil
 	}
 

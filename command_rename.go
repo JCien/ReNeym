@@ -10,6 +10,11 @@ import (
 
 func commandRename(cfg *config, args ...string) error {
 	// Pick Sheet to work on if there are multiple sheets
+	if len(cfg.sheets) < 1 {
+		fmt.Println("No Doc selected, please first scan a spreadsheet.")
+		return nil
+	}
+
 	if len(cfg.sheets) > 1 {
 		fmt.Println("Multiple Sheets Detected")
 		fmt.Println("Pick the sheet to work on:")
